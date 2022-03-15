@@ -1,25 +1,37 @@
+import React, {Suspense, lazy} from "react";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+import Header from "./components/Common/Header";
+import DetailSeriesContextProvider from "./context/DetailSeriesContext";
+import SeriesContextProvider from "./context/SeriesContext";
+import DetailsSeries from "./components/DetailSeries";
+import NotFound from "./components/NotFound";
+import Footer from "./components/Common/Footer";
+import { Loader } from "./components/Common/Loader";
+import { ErrorBoundary } from "./ErrorBoundary.js/ErrorBoundary";
+const Series = lazy(()=>import("./components/Series"));
 
-import './App.css';
-
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src="" className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => (
+  <ErrorBoundary>
+  <BrowserRouter>
+    <Header />
+    <Switch>
+      <Route exact path="/">
+        <SeriesContextProvider>
+          <Suspense fallback={<Loader/>}>
+          <Series />
+          </Suspense>
+        </SeriesContextProvider>
+      </Route>
+      <Route path="/serie/:serie_id">
+        <DetailSeriesContextProvider>
+          <DetailsSeries />
+        </DetailSeriesContextProvider>
+      </Route>
+      <Route component={NotFound} />
+    </Switch>
+   <Footer/>
+  </BrowserRouter>
+  </ErrorBoundary>
+)
 
 export default App;
